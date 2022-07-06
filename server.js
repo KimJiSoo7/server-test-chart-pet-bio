@@ -30,7 +30,7 @@ app.get("/charts", (req, res) => {
   const sqlQuery = "call GetHeartRatesData(?)";
   //   const id = req.body.id;
 
-  connection.query(sqlQuery, ["1234567890"], (err, result) => {
+  connection.query(sqlQuery, ["12345678"], (err, result) => {
     if (err) {
       console.log(err);
     } else {
@@ -40,12 +40,57 @@ app.get("/charts", (req, res) => {
   });
 });
 
+// app.post("/charts/heart", (req, res) => {
+//   const sqlQuery = "call GetHeartRatesData(?)";
+//   const id = req.body.deviceId;
+//   console.log("POST>> ", req.body);
+
+//   connection.query(sqlQuery, [id], (err, result) => {
+//     if (err) {
+//       console.log(err);
+//     } else {
+//       console.log("select heart-rates succeed");
+//       res.send(result);
+//     }
+//   });
+// });
+
+app.post("/register", (req, res) => {
+  const sqlQuery = "call IsValidId(?)";
+  const id = req.body.id;
+
+  console.log("req.body>> ", req.body);
+  connection.query(sqlQuery, [id], (err, result) => {
+    if (err) {
+      console.log(err);
+    } else {
+      console.log("result>> ", result);
+      res.send(result);
+    }
+  });
+});
+
+app.post("/register/update", (req, res) => {
+  const sqlQuery = "call UpdatePhoneId(?, ?)";
+  const id = req.body.id;
+  const phoneId = req.body.phoneId;
+
+  console.log("req.body>> ", req.body);
+  connection.query(sqlQuery, [id, phoneId], (err, result) => {
+    if (err) {
+      console.log(err);
+    } else {
+      console.log("result>> ", result.affectedRows);
+      res.send(result);
+    }
+  });
+});
+
 app.get("/charts/heart", (req, res) => {
   const sqlQuery = "call GetHeartRatesData(?)";
-  const id = req.body.device_id;
-  console.log(req.body);
+  const id = req.query.deviceId;
 
-  connection.query(sqlQuery, ["1234567890"], (err, result) => {
+  connection.query(sqlQuery, [id], (err, result) => {
     if (err) {
       console.log(err);
     } else {
@@ -63,6 +108,36 @@ app.post("/charts/breath", (req, res) => {
       console.log(err);
     } else {
       console.log("select breath-rates succeed");
+      res.send(result);
+    }
+  });
+});
+
+app.post("/notice/heart", (req, res) => {
+  const query = "call GetAbnormalHeartRates(?)";
+
+  const id = req.body.deviceId;
+
+  connection.query(query, [id], (err, result) => {
+    if (err) {
+      console.log(err);
+    } else {
+      console.log("select abnormal-heart-rate succeed");
+      res.send(result);
+    }
+  });
+});
+
+app.post("/notice/breath", (req, res) => {
+  const query = "call GetAbnormalBreathRates(?)";
+
+  const id = req.body.deviceId;
+
+  connection.query(query, [id], (err, result) => {
+    if (err) {
+      console.log(err);
+    } else {
+      console.log("select abnormal-breath-rate succeed");
       res.send(result);
     }
   });
