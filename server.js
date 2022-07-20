@@ -1,18 +1,14 @@
+// require("dotenv").config();
+// const { SERVER_PORT, HOST } = process.env;
 const express = require("express");
-const mysql = require("mysql");
+const connection = require("./mysql").pool;
 const cors = require("cors");
+const utils = require("./utils");
 // const bodyParser = require("body-parser");
 const app = express();
 
-const PORT = "8081";
-
-const connection = mysql.createPool({
-  host: "petbio.awsome-app.kr",
-  port: "3306",
-  user: "petbio",
-  password: "whgdmstodrkr0709",
-  database: "petbio",
-});
+// const PORT = process.env.SERVER_PORT || 8081;
+const PORT = 8081;
 
 app.use(express.json());
 app.use(cors());
@@ -26,26 +22,11 @@ app.use(cors());
 //   next();
 // });
 
-app.get("/charts", (req, res) => {
-  const sqlQuery = "call GetHeartRatesData(?)";
-  //   const id = req.body.id;
-
-  connection.query(sqlQuery, ["12345678"], (err, result) => {
-    if (err) {
-      console.log(err);
-    } else {
-      console.log("select heart-rates succeed");
-      res.send(result);
-    }
-  });
-});
-
-// app.post("/charts/heart", (req, res) => {
+// app.get("/charts", (req, res) => {
 //   const sqlQuery = "call GetHeartRatesData(?)";
-//   const id = req.body.deviceId;
-//   console.log("POST>> ", req.body);
+//   //   const id = req.body.id;
 
-//   connection.query(sqlQuery, [id], (err, result) => {
+//   connection.query(sqlQuery, ["12345678"], (err, result) => {
 //     if (err) {
 //       console.log(err);
 //     } else {
@@ -86,61 +67,51 @@ app.post("/register/update", (req, res) => {
   });
 });
 
-app.get("/charts/heart", (req, res) => {
-  const sqlQuery = "call GetHeartRatesData(?)";
-  const id = req.query.deviceId;
-
-  connection.query(sqlQuery, [id], (err, result) => {
-    if (err) {
-      console.log(err);
-    } else {
-      console.log("select heart-rates succeed");
-      res.send(result);
-    }
-  });
+app.get("/charts/D", (req, res) => {
+  // get parameters and a stored procedure
+  const { params, storedProcedure } = utils.getParams(req, "GetChartDay");
+  utils.executeQuery(connection, storedProcedure, params, res);
 });
 
-app.post("/charts/breath", (req, res) => {
-  const sqlQuery = "call GetHeartRatesData()";
-
-  connection.query(sqlQuery, [null], (err, result) => {
-    if (err) {
-      console.log(err);
-    } else {
-      console.log("select breath-rates succeed");
-      res.send(result);
-    }
-  });
+app.get("/charts/W", (req, res) => {
+  const { params, storedProcedure } = utils.getParams(req, "GetChartWeek");
+  utils.executeQuery(connection, storedProcedure, params, res);
 });
 
-app.post("/notice/heart", (req, res) => {
-  const query = "call GetAbnormalHeartRates(?)";
-
-  const id = req.body.deviceId;
-
-  connection.query(query, [id], (err, result) => {
-    if (err) {
-      console.log(err);
-    } else {
-      console.log("select abnormal-heart-rate succeed");
-      res.send(result);
-    }
-  });
+app.get("/charts/M", (req, res) => {
+  const { params, storedProcedure } = utils.getParams(req, "GetChartMonth");
+  utils.executeQuery(connection, storedProcedure, params, res);
 });
 
-app.post("/notice/breath", (req, res) => {
-  const query = "call GetAbnormalBreathRates(?)";
+app.post("/notice", (req, res) => {
+  const { params, storedProcedure } = utils.getParams(req, "GetAbnormalData");
+  utils.executeQuery(connection, storedProcedure, params, res);
+});
 
-  const id = req.body.deviceId;
+app.post("/home/currStatus", (req, res) => {
+  const { params, storedProcedure } = utils.getParams(req, "GetCurrenctStatus");
+  utils.executeQuery(connection, storedProcedure, params, res);
+});
 
-  connection.query(query, [id], (err, result) => {
-    if (err) {
-      console.log(err);
-    } else {
-      console.log("select abnormal-breath-rate succeed");
-      res.send(result);
-    }
-  });
+app.post("/home/notice", (req, res) => {
+  const { params, storedProcedure } = utils.getParams(
+    req,
+    "GetRecentAbnormalData"
+  );
+  utils.executeQuery(connection, storedProcedure, params, res);
+});
+
+app.post("/home/avg-data", (req, res) => {
+  const { params, storedProcedure } = utils.getParams(req, "GetAvgData");
+  utils.executeQuery(connection, storedProcedure, params, res);
+});
+
+app.post("/home/chart-data", (req, res) => {
+  const { params, storedProcedure } = utils.getParams(
+    req,
+    "GetChartDataOfHome"
+  );
+  utils.executeQuery(connection, storedProcedure, params, res);
 });
 
 app.get("/", (req, res) => {
