@@ -23,7 +23,11 @@ module.exports = {
       params.push(reqContents[prop]);
       procedure += "?,";
     }
-    procedure = procedure.substring(0, procedure.length - 1).concat(")");
+    if (params.length) {
+      procedure = procedure.substring(0, procedure.length - 1).concat(")");
+    } else {
+      procedure += ")";
+    }
     console.log({ params: params, storedProcedure: procedure });
     return { params: params, storedProcedure: procedure };
   },
