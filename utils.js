@@ -30,7 +30,7 @@ module.exports = {
     } else {
       procedure += ")";
     }
-    console.log({ params: params, storedProcedure: procedure });
+    // console.log({ params: params, storedProcedure: procedure });
     return { params: params, storedProcedure: procedure };
   },
   // executeQuery: function (conn, sp, params, res) {
@@ -45,14 +45,20 @@ module.exports = {
   // },
   executeQuery: function (sp, params, res) {
     pool.getConnectionPool((conn) => {
-      conn.query(sp, params, (err, result) => {
-        if (err) {
-          console.log(err);
-        } else {
-          console.log(`${sp} success`);
-          res.send(result);
-        }
-      });
+      try {
+        conn.query(sp, params, (err, result) => {
+          if (err) {
+            console.log(err);
+          } else {
+            console.log(`${sp} success`);
+            res.send(result);
+          }
+        });
+      } catch (e) {
+        console.log("Error >>  ", e);
+      } finally {
+        conn.release();
+      }
     });
   },
 };

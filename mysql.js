@@ -8,7 +8,7 @@ const pool = mysql.createPool({
   password: process.env.PASSWORD,
   database: process.env.DATABASE_NAME,
   connectionLimit: 1000,
-  connectTimeout: 20000,
+  connectTimeout: 7500,
   // insecureAuth: true,
 });
 
