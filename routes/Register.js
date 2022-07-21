@@ -1,7 +1,6 @@
 const express = require("express");
 const utils = require("../utils");
 const router = express.Router();
-const connection = require("../mysql").pool;
 
 // router.get("/", (req, res) => {
 //   res.send({ data: "Comment" });
@@ -21,12 +20,12 @@ const connection = require("../mysql").pool;
 
 router.get("/", (req, res) => {
   const { params, storedProcedure } = utils.getParams(req, "IsValidDeviceId");
-  utils.executeQuery(connection, storedProcedure, params, res);
+  utils.executeQuery(storedProcedure, params, res);
 });
 
 router.post("/", (req, res) => {
   const { params, storedProcedure } = utils.getParams(req, "RegisterDevice");
-  utils.executeQuery(connection, storedProcedure, params, res);
+  utils.executeQuery(storedProcedure, params, res);
 });
 
 module.exports = router;

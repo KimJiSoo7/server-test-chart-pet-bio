@@ -1,13 +1,25 @@
 const mysql = require("mysql");
 require("dotenv").config();
 
-const connection = mysql.createPool({
+const pool = mysql.createPool({
   host: process.env.HOST,
   port: process.env.PORT,
   user: process.env.USER,
   password: process.env.PASSWORD,
   database: process.env.DATABASE_NAME,
-  //   insecureAuth: true,
+  connectionLimit: 1000,
+  connectTimeout: 20000,
+  // insecureAuth: true,
 });
 
-exports.pool = connection;
+exports.getConnectionPool = (callbackFn) => {
+  pool.getConnection((err, conn) => {
+    if (err) {
+      console.log(err);
+    } else {
+      callbackFn(conn);
+    }
+  });
+};
+
+// exports.pool = pool;

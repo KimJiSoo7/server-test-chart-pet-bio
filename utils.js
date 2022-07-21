@@ -1,3 +1,5 @@
+const pool = require("./mysql");
+
 module.exports = {
   getParams: function (req, storedProcedure) {
     const params = [];
@@ -31,14 +33,26 @@ module.exports = {
     console.log({ params: params, storedProcedure: procedure });
     return { params: params, storedProcedure: procedure };
   },
-  executeQuery: function (conn, sp, params, res) {
-    conn.query(sp, params, (err, result) => {
-      if (err) {
-        console.log(err);
-      } else {
-        console.log(`${sp} success`);
-        res.send(result);
-      }
+  // executeQuery: function (conn, sp, params, res) {
+  //   conn.query(sp, params, (err, result) => {
+  //     if (err) {
+  //       console.log(err);
+  //     } else {
+  //       console.log(`${sp} success`);
+  //       res.send(result);
+  //     }
+  //   });
+  // },
+  executeQuery: function (sp, params, res) {
+    pool.getConnectionPool((conn) => {
+      conn.query(sp, params, (err, result) => {
+        if (err) {
+          console.log(err);
+        } else {
+          console.log(`${sp} success`);
+          res.send(result);
+        }
+      });
     });
   },
 };
