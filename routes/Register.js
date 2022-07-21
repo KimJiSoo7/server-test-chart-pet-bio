@@ -19,12 +19,12 @@ const router = express.Router();
 // });
 
 router.get("/", (req, res) => {
-  const { params, storedProcedure } = utils.getParams(req, "IsValidDeviceId");
+  const { params, storedProcedure } = utils.getParams(req, "GetRegisterId");
   utils.executeQuery(storedProcedure, params, res);
 });
 
 router.post("/", (req, res) => {
-  const { params, storedProcedure } = utils.getParams(req, "RegisterDevice");
+  const { params, storedProcedure } = utils.getParams(req, "PutRegisterDevice");
   utils.executeQuery(storedProcedure, params, res);
 });
 
